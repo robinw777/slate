@@ -6,6 +6,7 @@ class UniqueHeadCounter < Middleman::Renderers::MiddlemanRedcarpetHTML
     super
     @head_count = {}
   end
+
   def header(text, header_level)
     friendly_text = text.gsub(/<[^>]*>/,"").parameterize
     if friendly_text.strip.length == 0
@@ -20,5 +21,11 @@ class UniqueHeadCounter < Middleman::Renderers::MiddlemanRedcarpetHTML
       friendly_text += "-#{@head_count[friendly_text]}"
     end
     return "<h#{header_level} id='#{friendly_text}'>#{text}</h#{header_level}>"
+  end
+
+  def preprocess(full_document)
+    full_document = super(full_document) if defined?(super)
+    full_document = ERB.new(full_document).result(binding)
+    return full_document
   end
 end
